@@ -140,74 +140,17 @@ if st.session_state.analysis_results:
         key="value_selection"
     )
 
-# --- REPLACE THE "Generate Mission Statements" LOGIC WITH THIS FINAL VERSION ---
-if st.button("Generate Mission Statements", type="primary"):
-    if 3 <= len(st.session_state.selected_values) <= 5:
-        with st.spinner("Crafting your mission statements... This may take a moment."):
-            try:
-                # --- Step 1: Trigger the Agent ---
-                region = st.secrets["RELEVANCE_REGION"]
-                auth_token = f"{st.secrets['RELEVANCE_PROJECT_ID']}:{st.secrets['RELEVANCE_API_KEY']}"
-                agent_id = st.secrets["RELEVANCE_AGENT_ID_WRITER"]
-                
-                trigger_endpoint = f"https://api-{region}.stack.tryrelevance.com/latest/agents/trigger"
-                headers = {"Authorization": auth_token, "Content-Type": "application/json"}
-                
-                # --- THIS IS THE CORRECTED LINE ---
-                # Convert the list of values into a single, comma-separated string
-                content_string = ", ".join(st.session_state.selected_values)
-                
-                payload = {"agent_id": agent_id, "message": {"role": "user", "content": content_string}}
-
-                trigger_response = requests.post(trigger_endpoint, headers=headers, data=json.dumps(payload))
-                trigger_response.raise_for_status()
-                
-                job = trigger_response.json()
-                studio_id = job["job_info"]["studio_id"]
-                job_id = job["job_info"]["job_id"]
-
-                # --- Step 2: Poll for the Results ---
-                poll_endpoint = f"https://api-{region}.stack.tryrelevance.com/latest/studios/{studio_id}/async_poll/{job_id}"
-                final_result = None
-
-                for i in range(20):
-                    status_response = requests.get(poll_endpoint, headers=headers)
-                    status_response.raise_for_status()
-                    status_data = status_response.json()
-
-                    for update in status_data.get("updates", []):
-                        if update.get("type") == "chain-success":
-                            try:
-                                answer_string = update["output"]["output"]["answer"]
-                                start = answer_string.find('{')
-                                end = answer_string.rfind('}') + 1
-                                json_string = answer_string[start:end]
-                                final_result = json.loads(json_string)
-                            except (KeyError, json.JSONDecodeError):
-                                final_result = {}
-                            break
-                    
-                    if final_result is not None:
-                        break
-                    
-                    time.sleep(1)
-
-                # --- Step 3: Process the final result ---
-                if final_result and "statements" in final_result:
-                    st.session_state.mission_statements = final_result
-                    st.success("Drafts complete!")
-                elif final_result is not None:
-                    st.error("The agent completed but returned an unexpected format.")
-                    st.json(final_result)
-                else:
-                    st.error("The agent took too long to respond. Please try again later.")
-
-            except requests.exceptions.RequestException as e:
-                st.error(f"An error occurred with the API request: {e}")
-    else:
-        st.warning("Please select between 3 and 5 values to continue.")
+    # This button is now correctly nested, so it will only appear with the multiselect.
+    if st.button("Generate Mission Statements", type="primary"):
+        if 3 <= len(st.session_state.selected_values) <= 5:
+            # (Your API call logic for Agent 2 goes here)
+            with st.spinner("Crafting your mission statements... This may take a moment."):
+                # ... existing Agent 2 API call code ...
+        else:
+            st.warning("Please select between 3 and 5 values to continue.")
 
 # --- STAGE 3: DISPLAY MISSION STATEMENTS ---
+# This block remains at the top level.
 if st.session_state.mission_statements:
     st.subheader("Step 3: Draft Your Mission Statement")
     st.markdown("Here are two distinct drafts based on your values. Use them as a starting point to craft a statement that feels authentic to you.")
