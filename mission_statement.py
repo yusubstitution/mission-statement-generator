@@ -96,12 +96,12 @@ if st.session_state.analysis_results:
     st.markdown("Here are the behaviors and potential values extracted from your story. This helps reveal the qualities you demonstrate when you're at your best.")
 
     df = pd.DataFrame(st.session_state.analysis_results["analysis"])
-    df['values'] = df['values'].apply(lambda x: ', '.join(x))
+    df['Values'] = df['Values'].apply(lambda x: ', '.join(x))
     st.table(df)
 
     all_values = set()
     for item in st.session_state.analysis_results["analysis"]:
-        all_values.update(item["values"])
+        all_values.update(item["Values"])
 
     st.markdown("From the list of potential values, select the **3 to 5** that resonate most with you.")
     
