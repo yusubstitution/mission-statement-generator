@@ -25,7 +25,7 @@ st.markdown(
 )
 
 st.text_area(
-    label="Describe your peak moment. What was the situation? What actions did you take? What was your impact?",
+    label="Describe your peak moment. Feel free to write a couple of paragraphs to explain what was the situation, what actions you took and how the result made you feel",
     height=250,
     key="user_story"
 )
@@ -176,7 +176,7 @@ if st.session_state.analysis_results:
 # --- STAGE 3: DISPLAY MISSION STATEMENTS ---
 if st.session_state.mission_statements:
     st.subheader("Step 3: Draft Your Mission Statement")
-    st.markdown("Here are two distinct drafts based on your values. Use them as a starting point to craft a statement that feels authentic to you.")
+    st.markdown("Different cultures tend to lean towards different ends for the concept of Internal vs. External locus of control. Here are two distinct drafts based on your values. Use them as a starting point to craft a statement that feels authentic to you.")
     
     for statement in st.session_state.mission_statements["statements"]:
         st.markdown(f"#### {statement['type']}")
